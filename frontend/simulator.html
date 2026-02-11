@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome | Nigel</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body>
+    <div class="app">
+        <header class="topbar">
+        <div class="topbar-inner">
+        <div class="brand">
+        <div class="brand-mark"></div>
+        <div>nigel</div>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <h1 class="h1">First payslip simulator</h1>
+    <p class="sub">MVP placeholder page.</p>
+
+    <section class="card">
+    <label class="sub">Monthly income (£)</label>
+    <input id="income" type="number" placeholder="e.g. 800" />
+    <label class="sub">Needs (£)</label>
+    <input id = "needs" type="number" placeholder="e.g. 400" />
+
+    <label class="sub">Wants (£)</label>
+    <input id ="wants" type="number" placeholder="e.g. 250" />
+
+
+    <label class="sub">Savings (£)</label>
+    <input id="savings" type="number" placeholder="e.g. 150">
+
+    <button id="calcBtn" type="number" class="btn" style="width: 100%; margin-top: 8px;">
+        Calculate
+    </button>
+    <button id="slimResetBtn" type="button" class="btn btn-ghost" style="width: 100%; margin-top: 8px;">
+        Reset
+    </button>
+    <div id="slimResults" class="sub" style="margin-top: 12px;"></div>
+    </section>
+    <a class="btn" href="modules.html" style="width: 100%; display: inline-block; text-align: center; margin-top: 12px;">
+        Back to modules
+    </a>
+</main>
+</div>
+<script src="../js/simulator.js"></script>
+</body>
+</html>
