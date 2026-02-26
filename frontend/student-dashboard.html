@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Join class | Nigel</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body>
+    <div class="app">
+        <header class="topbar">
+        <div class="topbar-inner">
+        <div class="brand">
+        <div class="brand-mark"></div>
+        <div>nigel</div>
+        </div>
+    </div>
+    <div class="search" role="search">
+        <span aria-hidden="true"></span>
+        <input id="askNigel" type="text" placeholder="ask Nigel" />
+    </div>
+    </div>
+</header>
+
+<main class="container">
+    <h1 class="h1">Welcome back</h1>
+    <p class="sub" id="studentGreeting"></p>
+
+    <section class="card">
+        <div class="card-row">
+        <div class="badge">Today's task</div>
+        <p style="margin: 10px 0 0; font-size: 14px; color: var(--text);">
+            Budgeting basics
+        </p>
+        <p style="margin: 6px 0 0; font-size: 13px; color: var(--muted);">
+            Learn how to split money into needs, wants, and savings.
+        </p>
+           <div>
+            <a class="btn" href="modules.html">Start</a>
+           </div>
+    </section>
+    <section class="card">
+        <strong id="progressCount">0</strong>
+    </section>
+    <section class="card" style="margin-top: 12px;">
+        <div class="card-row">
+            <div>
+                <div class="badge">Class</div>
+                <p style="margin: 10px 0 0; font-size: 13px ; color: var(--muted);">
+                    <span id = "classCodeLabel"></span>
+                </p>
+            </div>
+            <button class="btn btn-ghost" id="logoutBtn">Reset</button>
+        </div>
+    </section>
+</main>
+<nav class="nav" aria-label="Bottom navigation">
+    <div class="nav-inner">
+        <a href="student-dashboard.html" class="active">
+            <span aria-hidden="true"></span>
+            <span>Home</span>
+        </a>
+        <a href="modules.html">
+            <span aria-hidden="true"></span>
+            <span>Modules</span>
+        </a>
+        <a href="progress.html">
+            <span aria-hidden="true"></span>
+            <span>Menu</span>
+        </a>
+    </div>
+</nav>
+</div>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>
