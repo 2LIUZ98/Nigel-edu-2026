@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Join class | Nigel</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+
+<body>
+    <div class="app">
+        <header class="topbar">
+        <div class="topbar-inner">
+        <div class="brand">
+        <div class="brand-mark"></div>
+        <div>nigel</div>
+        </div>
+    </div>
+</header>
+<main class="container">
+    <h1 class="h1">Join to learn finance budgeting </h1>
+    <p class="sub">Enter your name and invite code to get started.</p>
+    <section class="card">
+        <form id="joinForm">
+            <label class="sub" for="studentName">Your name</label>
+            <input 
+            type="text"
+            id="studentName"
+            placeholder="e.g. Alex"
+            required
+            style="width:100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 14px;"
+            />
+
+            <label class="sub" for="inviteCode">invite code</label>
+            <input 
+            type="text"
+            id="inviteCode"
+            placeholder="e.g. NGL-204"
+            required
+            style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 18px;"
+            />
+
+            <button type="submit" class="btn" style="width: 100%">
+                Join 
+            </button>
+        </form>
+    </section>
+</main>
+</div>
+<script type="module" src="../js/auth.js"></script>
+</body>
+</html>
