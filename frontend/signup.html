@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create account | Nigel</title>
+    <link rel="stylesheet" href="../css/main.css">
+
+<style>
+.auth-wrap{
+    min-height: calc(100vh - 72px);
+    display: grid;
+    place-items: center;
+    padding: 32px 16px;
+}
+.auth-card{
+width: min(560px, 100%);
+border-radius: 18px;
+padding: 22px;
+background: #f7f7f9;
+border: 1px solid rgba(0, 0, 0, 0.06);
+text-align: left;
+}
+.auth-card h1{
+margin: 0 0 8px;
+font-size: 28px;
+letter-spacing: -0.02em;
+}
+.muted{opacity: 0.75; margin: 0 0 18px;}
+.row{display: grid; grid-template-columns: 1fr 1fr; gap: 12px;}
+@media (max-width: 560px){.row{grid-template-columns: 1fr;}}
+.field{display: grid; gap: 8px; margin-bottom: 14px;}
+.field span{font-weight: 700; font-size: 14px;}
+.field input, .field select{
+    width: 100%;
+    padding: 12px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    outline: none; 
+}
+.btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    color:  #fff;
+    font-weight: 900;
+    cursor: pointer;
+    text-decoration: none;
+    background: #111;
+    width: 100%;
+}
+.links{
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.85;
+}
+.links a{text-decoration: none;}
+.msg{margin-top: 12px; font-weight: 800;}
+.msg.err{color: #b00020;}
+.msg.ok{color: #0b6b2f;}
+</style>
+</head>
+<body>
+<div class="app">
+    <header class="topbar">
+        <div class="topbar-inner">
+        <div class="brand">
+        <div class="brand-mark"></div>
+        <div>nigel</div>
+        </div>
+        </div>
+    </header>
+    <main class="auth-wrap">
+    <div class="auth-card">
+      <h1>Create account</h1>
+      <p class="muted">Choose a role and create an account to continue.</p>
+      <form id="signupForm" novalidate>
+        <label class="field">
+            <span>Role</span>
+            <select id="role" required>
+                <option value="student">Student</option>
+                <option value="parent">Parent</option>
+                <option value="teacher">Teacher</option>
+            </select>
+        </label>
+        <div class="row">
+            <label class="field">
+                <span>First name</span>
+                <input id="firstName" type="text" autocomplete="given-name" required/>
+            </label>
+            <label class="field">
+                <span>Last name</span>
+                <input id="lastName" type="text" autocomplete="family-name" required />
+            </label>
+        </div>
+        <label class="field">
+        <span>Email</span>
+        <input id="email" type="email" autocomplete="email" required />
+        </label>
+
+        <label class="field">
+          <span>Password</span>
+          <input id="password" type="password" minlength="8" autocomplete="new-password" required />  
+        </label>
+        <button class="btn" type="submit">Create account</button>
+        <p id="msg" class="msg" aria-live="polite"></p>
+        <div class="links">
+            <a href="portal.html">Back</a>
+            <a href="login-student.html">Student login</a>
+        </div>
+      </form>  
+    </div>
+    </main>
+    <script>
+            document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("signupForm");
+      const msg = document.getElementById("msg");
+
+      const normaliseEmail = (v) => String(v || "").trim().toLowerCase();
+
+      const readUsers = () => {
+        try { return JSON.parse(localStorage.getItem("nigel_users") || "[]"); }
+        catch { return []; }
+      };
+
+      const writeUsers = (users) => {
+        localStorage.setItem("nigel_users", JSON.stringify(users));
+      };
+
+      const makeId = () => {
+        if (crypto && crypto.randomUUID) return crypto.randomUUID();
+        return String(Date.now()) + "_" + Math.random().toString(16).slice(2);
+      };
+
+      const setMsg = (text, ok = false) => {
+        msg.textContent = text || "";
+        msg.className = ok ? "msg ok" : "msg err";
+        if (!text) msg.className = "msg";
+      };
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        setMsg("");
+
+        const role = document.getElementById("role").value;
+        const firstName = String(document.getElementById("firstName").value || "").trim();
+        const lastName = String(document.getElementById("lastName").value || "").trim();
+        const email = normaliseEmail(document.getElementById("email").value);
+        const password = String(document.getElementById("password").value || "");
+
+        if (!role || !firstName || !lastName || !email || !password) {
+          setMsg("Please fill in all fields.");
+          return;
+        }
+
+        if (password.length < 8) {
+          setMsg("Password must be at least 8 characters.");
+          return;
+        }
+
+        const users = readUsers();
+        const exists = users.some(u => normaliseEmail(u.email) === email);
+        if (exists) {
+          setMsg("That email is already registered. Try logging in.");
+          return;
+        }
+
+        users.push({
+          id: makeId(),
+          role,
+          firstName,
+          lastName,
+          email,
+          password, 
+          createdAt: new Date().toISOString()
+        });
+
+        writeUsers(users);
+        setMsg("Account created. Redirecting...", true);
+
+        setTimeout(() => {
+          window.location.href = role === "student" ? "login-student.html" : "login-staff.html";
+        }, 400);
+      });
+    });
+    </script>
+</div>
+</body>

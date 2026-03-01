@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome | Nigel</title>
+    <link rel="stylesheet" href="../css/main.css">
+<style>
+
+    .page-wrap{
+        min-height: calc(100vh - 72px);
+        display: grid;
+        place-items: start center;
+        padding: 28px 16px;
+    }
+    .panel{
+        width: min(980px, 100%);
+        background: #f7f7f9;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 18px;
+        padding: 22px;
+    }
+    .top{
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+    .top h1{
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: -0.02em;
+    }
+    .muted{opacity: 0.75; margin: 6px 0 0;}
+    .actions{display: flex; gap: 10px; align-items: center;}
+
+    .btn{
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-weight: 800;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    .btn.primary{background: #2f78d6; color: #fff;}
+    .btn.ghost{background: transparent; border: 1px solid rgba(0, 0, 0, 0.12); color: #111;}
+    .btn.small{padding: 8px 10px; font-weight: 700;}
+
+    .grid{
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 16px;
+        align-items: start;
+    }
+    @media (max-width: 860px){
+        .grid{grid-template-columns: 1fr;}
+    }
+    .card{
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 16px;
+        padding: 16px;
+    }
+    .card h2{
+        margin: 0 0 10px;
+        font-size: 18px;
+    }
+    .field{display: grid; gap: 8px; margin-bottom: 12px;}
+    .field span{ font-weight: 700; font-size: 14px;}
+    select{
+        width: 100%;
+        padding: 12px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        background: #fff;
+        outline: none;
+    }
+    .code{
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+    }
+    .hint{
+        margin: 10px 0 0;
+        opacity: 0.75;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    .list{
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: none;
+        gap: 10px;
+    }
+    .list li{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+    }
+    .who{font-weight: 800;}
+    .meta{opacity: 0.75; font-size: 13px;}
+    .msg{margin-top: 12px; font-weight:13px}
+    .msg.err{color: #b00020;}
+    .msg.ok{color: #0b6b2f;}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+<div class="topbar-inner">
+<div class="brand">
+<div class="brand-mark"></div>
+<div>nigel</div>
+</div>
+</div>
+</header>
+<main class="page-wrap">
+<section class="panel">
+<div class="top">
+<div>
+    <h1>Staff dashboard</h1>
+    <p class="muted" id="welcomeLine">Manage students and generate acess codes.</p>
+</div>
+<div class="actions">
+    <a class="btn ghost" href="portal.html">Portal</a>
+    <button class="btn ghost" id="logoutBtn" type="button">Log out</button>
+</div>
+</div>
+<div class="grid">
+    <div class="card">
+        <h2>Generate a code</h2>
+        <label class="field">
+            <span>Select a student</span>
+            <select id="studentSelect"></select>
+        </label>
+        <button class="btn primary" id="genBtn" type="button">Generate code</button>
+        <div class="code-box" aria-live="polite">
+        <div>
+        <div class="meta">Latest code</div>
+        <div class="code" id="codeOut">—</div>
+        </div>
+        <button class="btn ghost small" id="copyBtn" type="button">Copy</button>
+        </div>
+        <p class="hint">Codes are stored locally for now (localStorage). Later, we'll store them in MongoDB.</p>
+        <p id="msg" class="msg"></p>
+    </div>
+    <div class="card">
+        <h2>Recent codes</h2>
+        <ul class="list" id="recentList"></ul>
+        <p class="hint">Shows the most recent codes created on this device.</p>
+    </div>
+</div>
+</section>
+</main>
+</div>
+<script src="../js/auth.js"></script>
+<script>
+  const readJSON = (k, fallback) => {
+      try {
+        const raw = localStorage.getItem(k);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    };
+    const writeJSON = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+    const makeCode = (len = 6) => {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let out = "";
+      for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
+      return out;
+    };
+
+    const fmtTime = (iso) => {
+      try {
+        const d = new Date(iso);
+        return d.toLocaleString(undefined, { year: "numeric", month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+      } catch {
+        return iso;
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const me = requireStaffOrRedirect();
+      if (!me) return;
+
+      const welcomeLine = document.getElementById("welcomeLine");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      const studentSelect = document.getElementById("studentSelect");
+      const genBtn = document.getElementById("genBtn");
+      const codeOut = document.getElementById("codeOut");
+      const copyBtn = document.getElementById("copyBtn");
+      const recentList = document.getElementById("recentList");
+      const msg = document.getElementById("msg");
+
+      welcomeLine.textContent = `Logged in as ${me.firstName || ""} ${me.lastName || ""} (${me.role})`.trim();
+
+      const users = getUsers();
+      const students = users.filter(u => u.role === "student");
+
+      const showMsg = (text, ok = false) => {
+        msg.textContent = text || "";
+        msg.className = ok ? "msg ok" : "msg err";
+        if (!text) msg.className = "msg";
+      };
+
+      const renderRecent = () => {
+        const codes = readJSON("nigel_codes", []).slice().reverse().slice(0, 6);
+        if (!codes.length) {
+          recentList.innerHTML = `<li><span class="who">No codes yet</span><span class="meta">Generate one to see it here</span></li>`;
+          return;
+        }
+
+        const byId = Object.fromEntries(students.map(s => [s.id, s]));
+        recentList.innerHTML = codes.map(c => {
+          const s = byId[c.studentId];
+          const who = s ? `${s.firstName} ${s.lastName}` : "Unknown student";
+          return `
+            <li>
+              <div>
+                <div class="who">${who}</div>
+                <div class="meta">${fmtTime(c.createdAt)}</div>
+              </div>
+              <div class="who">${c.code}</div>
+            </li>
+          `;
+        }).join("");
+      };
+
+      if (!students.length) {
+        studentSelect.innerHTML = `<option value="">No students found (create a student account first)</option>`;
+        genBtn.disabled = true;
+      } else {
+        studentSelect.innerHTML = students
+          .map(s => `<option value="${s.id}">${s.firstName} ${s.lastName} (${s.email})</option>`)
+          .join("");
+      }
+
+      genBtn.addEventListener("click", () => {
+        showMsg("");
+
+        const studentId = studentSelect.value;
+        if (!studentId) {
+          showMsg("Please select a student.");
+          return;
+        }
+
+        const code = makeCode(6);
+        const codes = readJSON("nigel_codes", []);
+
+        codes.push({
+          code,
+          studentId,
+          createdByUserId: me.id,
+          createdAt: new Date().toISOString()
+        });
+
+        writeJSON("nigel_codes", codes);
+        codeOut.textContent = code;
+        renderRecent();
+        showMsg("Code generated.", true);
+      });
+
+      copyBtn.addEventListener("click", async () => {
+        const text = String(codeOut.textContent || "").trim();
+        if (!text || text === "—") {
+          showMsg("Nothing to copy yet.");
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(text);
+          showMsg("Copied to clipboard.", true);
+        } catch {
+          showMsg("Could not copy. Select the code and copy manually.");
+        }
+      });
+
+      logoutBtn.addEventListener("click", () => {
+        clearSession();
+        window.location.href = "portal.html";
+      });
+
+      renderRecent();
+    });
+</script>
+<script src="../js/auth.js"></script>
+</body>
+</html>

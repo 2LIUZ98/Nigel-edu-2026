@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome | Nigel</title>
+    <link rel="stylesheet" href="../css/main.css">
+<style>
+    .auth-wrap{
+        min-height: calc(100vh - 72px);
+        display: grid;
+        place-items: center;
+        padding: 32px 16px;
+    }
+    .auth-card{
+        width: min(520px, 100%);
+        border-radius: 18px;
+        padding: 22px;
+        background: #f7f7f9;
+        border: 1px solid rgba(0,0,0,0.06);
+        text-align: left;
+    }
+    .auth-card h1{
+        margin: 0 0 8px;
+        font-size: 28px;
+        letter-spacing: -0.02em;
+    }
+    .muted{opacity: 0.75; margin: 0 0 18px;}
+    .field{display: grid; gap: 8px; margin-bottom: 14px;}
+    .field span{font-weight: 700; font-size: 14px;}
+    .field input{
+        width: 100%;
+        padding: 12px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        background: #fff;
+        outline: none;
+    }
+    .row{
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 8px;
+    }
+    .btn{
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     gap: 10px;
+     border: 0;
+     border-radius: 12px;
+     padding: 12px 14px;
+     color: #fff;
+     font-weight: 800;
+     cursor: pointer;
+     text-decoration: none;
+     background: #d80b1f;
+     width: 100%;
+    }
+    .msg{margin-top: 12px; font-weight: 700;}
+    .msg.err{ color: #b00020;}
+    .msg.ok{color: #0b6b2f;}
+    .links{
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 12px;
+        font-size: 14px;
+        opacity: 0.85;
+    }
+    .links a{text-decoration: none;}
+</style>
+</head>
+<body>
+    <div class="app">
+        <header class="topbar">
+        <div class="topbar-inner">
+        <div class="brand">
+        <div class="brand-mark"></div>
+        <div>nigel</div>
+        </div>
+        </div>
+        </header>
+        <main class="auth-wrap">
+            <div class="auth-card">
+                <h1>Student login</h1>
+                <p class="muted">Log in to view your lessons, quizzes, and progress.</p>
+                <form id="loginStudentForm" novalidate>
+                    <label class="field">
+                        <span>Email</span>
+                        <input id="email" type="email" autocomplete="email" required />
+                    </label>
+                    <label class="field">
+                    <span>Password</span>
+                    <input id="password" type="password" autocomplete="current-password" required />
+                    </label>
+                    <button class="btn" type="submit">Log in</button>
+                    <p id="msg" class="msg" aria-live="polite"></p>
+                    <div class="links">
+                        <a href="portal.html">Back</a>
+                        <a href="signup.html">Create an account</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("loginStudentForm");
+            const msg = document.getElementById("msg");
+            
+            const normaliseEmail = (v) => String (v || "").trim().toLowerCase();
+            const readUsers = () => {
+                try {return JSON.parse(localStorage.getItem("nigel_users") || "[]");}
+                catch { return [];}
+            };
+            form .addEventListener("submit", (e) =>{
+                e.preventDefault();
+                msg.textContent = "";
+                msg.className = "msg";
+
+                const email = normaliseEmail(document.getElementById("email").value);
+                const password = String(document.getElementById("password").value || "");
+
+                if (!email || !password){
+                    msg.textContent = "Please enter your email and password.";
+                    msg.className = "msg err";
+                    return;
+                }
+                const users = readUsers();
+                const user = users.find(u => normaliseEmail(u.email) === email && u.role === "student");
+
+                if (!user){
+                    msg.textContent = "Student account not found.";
+                    msg.className = "msg err";
+                    return;
+                }
+                if (String(user.password || "") !== password){
+                    msg.textContent = "Incorrect password";
+                    msg.className = "msg err";
+                    return;
+                }
+                localStorage.setItem("nigel_session", JSON.stringify({userId: user.id, role: user.role}));
+                msg.textContent = "Logged in. Redirecting...";
+                msg.className = "msg ok";
+
+                setTimeout(() => {
+                    let joined = {};
+                    try {
+                        joined = JSON.parse(localStorage.getItem("nigel_joined") || "{}");}
+                    catch {
+                        joined = {};
+                    }
+                    if (joined[user.id]) {
+                        console.log("Session before dashboard:", localStorage.getItem("nigel_session"));
+                        window.location.href = "student-dashboard.html";
+                    } else{
+                        window.location.href = "join.html";  
+                    }
+                }, 350);
+            });
+        });
+    </script>
+</body>
+</html>
