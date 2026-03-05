@@ -1,19 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const raw = localStorage.getItem("nigel_student");
-
-    if(!raw) {
-        window.location.href = "login.html";
-        return;
-    }
-    let student;
-    try{
-        student = JSON.parse(raw);
-    } catch{
-        localStorage.removeItem("nigel_student");
-        window.location.href = "login.html";
-        return;
-    }
-
+    const student = requireStudentOrRedirect();
+    if (!student) return;
     const progress = student.progress || {};
 
     const moduleLinks = Array.from(document.querySelectorAll('a[href^="lesson.html?module="]'));

@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const raw = localStorage.getItem("nigel_student");
-    if (!raw) {
-      window.location.href = "login.html";
-      return;
-    }
+    const student = requireStudentOrRedirect();
+    if (!student) return;
   
     const params = new URLSearchParams(window.location.search);
     const moduleId = params.get("module") || "budgeting";

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!ok) return;
 
             resetStudent();
-            window.location.href = "login.html"
+            window.location.href = "login-student.html"
         });
     }
 });

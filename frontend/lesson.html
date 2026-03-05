@@ -11,13 +11,42 @@
 <body>
     <div class="app">
         <header class="topbar">
-        <div class="topbar-inner">
-        <div class="brand">
-        <div class="brand-mark"></div>
-        <div>nigel</div>
-        </div>
-    </div>
-</header>
+            <div class="topbar-inner">
+              <a href="brand" href="index.html">
+                <div class="brand-mark"></div>
+                <div>nigel</div>
+              </a>
+              <div class="search" role="search">
+                <input id="askNigel" type="text" placeholder="ask Nigel..."/>
+              </div>
+            </div>
+            <nav class="site-nav">
+              <ul class="site-menu">
+                <li><a href="index.html">Home</a></li>
+                <li class="has-drop">
+                  <a href="modules.html">Modules</a>
+                  <ul class="drop">
+                      <li><a href="lesson.html?module=budgeting">Budgeting</a>
+                        <li><a href="lesson.html?module=needs-wants">Needs vs Wants</a></li> 
+                        <li><a href="lesson.html?module=scams">Scams</a></li> 
+                      </li>
+                  </ul>
+              </li>
+              <li>
+                  <a href="student-dashboard.html">Dashboard</a>
+              </li>
+              <li>
+                  <a class="active" href="progress.html">Progress</a>
+              </li>
+              <li>
+                  <a href="portal.html">Login</a>
+              </li>
+              <li>
+                <a href="menu.html">Menu</a>
+              </li>
+          </ul>
+      </nav>
+    </header>
 
 <main class="container">
     <h1 class="h1" id="lessonTitle">Lesson</h1>
@@ -53,6 +82,7 @@
     </div>
    </nav>
 </div>
+<script src="../js/auth.js"></script>
 <script src ="../js/lesson.js"></script>
 </body>
 </html>

@@ -31,16 +31,22 @@ window.getCurrentUser = window.getCurrentUser || function(){
 window.requireStudentOrRedirect = window.requireStudentOrRedirect || function(){
     const me = getCurrentUser();
     if (!me || me.role !== "student"){
-        window.location.href = "login-student.html";
+        const next = encodeURIComponent(
+            window.location.pathname.split("/").pop() + window.location.search
+        );
+        window.location.href = `login-student.html?next=${next}`;
         return null;
     }
     return me;
 }
 window.requireStaffOrRedirect = window.requireStaffOrRedirect || function(){
     const me = getCurrentUser();
-    if (!me || me.role !== "teacher" && me.role !== "parent"){
-        window.location.href = "login-staff.html";
+    if (!me || (me.role !== "teacher" && me.role !== "parent")){
+        const next = encodeURIComponent(
+            window.location.pathname.split("/").pop() + window.location.search
+        );
+        window.location.href = `login-staff.html?next=${next}`;
         return null;
     }
     return me;
-}
+};

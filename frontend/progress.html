@@ -4,19 +4,57 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Welcome | Nigel</title>
+    <title>Progress | Nigel</title>
     <link rel="stylesheet" href="../css/main.css">
 </head>
 
 <body>
     <div class="app">
         <header class="topbar">
-        <div class="topbar-inner">
-        <div class="brand">
-        <div class="brand-mark"></div>
-        <div>nigel</div>
+            <div class="topbar-inner">
+            <a href="brand" href="index.html">
+                <div class="brand-mark"></div>
+                <div>nigel</div>
+            </a>
+            <div></div>
+    
+            
+        <div class="search" role="search">
+            <input id="askNigel" type="text" placeholder="ask Nigel..." />
         </div>
-    </div>
+        <div class="topbar-right">
+            <button class="icon-btn" aria-label="Notifications">🔔</button>
+            <a class="btn" href="portal.html">Login</a>
+        </div>
+        </div>
+    
+        <nav class="site-nav">
+            <ul class="site-menu">
+                <li>
+                    <a class="active" href="index.html">Home</a>
+    
+                </li>
+                <li class="has-drop">
+                    <a href="modules.html">Modules</a>
+                    <ul class="drop">
+                        <li><a href="lesson.html?module=budgeting">Budgeting</a>
+                          <li><a href="lesson.html?module=needs-wants">Needs vs Wants</a></li> 
+                          <li><a href="lesson.html?module=scams">Scams</a></li> 
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="student-dashboard.html">Dashboard</a>
+                </li>
+                <li>
+                    <a href="progress.html">Progress</a>
+                </li>
+                <li>
+                    <a href="menu.html">Menu</a>
+                </li>
+                
+            </ul>
+        </nav>
     </header>
 
     <main class="container">
@@ -36,16 +74,9 @@
         </a>
     </main>
 
-    <nav class="nav" aria-label="Bottom navigation">
-        <div class="nav-inner">
-           <a href="index.html" class="active"><span aria-hidden="true">🏠</span><span>Home</span></a>
-           <a href="modules.html"><span aria-hidden="true">📚 </span> <span>Modules</span></a>
-           <div class="fab" aria-label="Quick action">+</div>
-           <a href="progress.html"><span aria-hidden="true">📈 </span><span>Progress</span></a>
-           <a href="menu.html"><span aria-hidden="true">☰</span><span>Menu</span></a>
-        </div>
-       </nav>
+   
        </div>
+       
        <script src="../js/progress.js"></script>
        </body>
        </html>

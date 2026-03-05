@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("quizForm");
     const msg = document.getElementById("quizMsg");
     const container = document.getElementById("quizQuestions");
+
+    const backBtn = document.getElementById("backToLessonBtn");
+    if (backBtn) backBtn.href = `lesson.html?module=${encodeURIComponent(moduleId)}`;
   
     const quizzes = {
       budgeting: {
@@ -154,7 +157,16 @@ document.addEventListener("DOMContentLoaded", () => {
         lastCompleted: new Date().toISOString()
       };
   
-      setStudent(student);
+      const users = getUsers();
+      const idx = users.findIndex(u => String(u.id) === String(student.id));
+
+      if (idx !== -1){
+        users[idx] = student;
+      } else {
+        users.push(student)
+      }
+      writeJSON("nigel_users", users);
+
       window.location.href = "student-dashboard.html?updated=1";
     });
   });

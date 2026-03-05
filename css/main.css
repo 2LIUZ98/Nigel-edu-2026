@@ -34,11 +34,12 @@ button{
 }
 
 .app{
-    max-width: 420px;
+    max-width: 1200px;
     margin: 0 auto;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    padding: 0 16px;
 }
 .topbar{
     position: sticky;
@@ -53,8 +54,26 @@ button{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 16px;
-    gap: 12px;
+}
+.topbar-right{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.icon-btn{
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+.login-btn{
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #d80b1f;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
 }
 .brand{
     display: flex;
@@ -89,8 +108,8 @@ button{
 }
 
 .container{
-    padding: 16px;
-    flex: 1;
+    padding: 28px 0;
+
 }
 .h1 {
     font-size: 18px;
@@ -108,6 +127,7 @@ button{
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: 14px;
+    margin-bottom: 16px;
 }
 
 .card + .card {
@@ -227,4 +247,61 @@ button{
     margin-top: -22px;
     border: 4px solid var(--bg);
     font-size: 24px;
+}
+.nav, .fab{
+    display: none;
+}
+
+.site-nav{
+    border-top: 1px solid var(--border);
+    padding: 10px 0 14px;
+}
+.site-menu{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.site-menu > li{
+    position: relative;
+}
+.site-menu a{
+    display: block;
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.site-menu a:hover{
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+.site-menu a.active{
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+.has-drop .drop{
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 220px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 8px;
+    margin: 0;
+    list-style: none;
+    display: none;
+}
+.has-drop .drop a{
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+.has-drop:hover .drop{
+    display: block;
 }

@@ -1,0 +1,18 @@
+.page-dashboard .container{
+    flex: initial !important;
+    padding: 16px 0 !important;
+}
+.page-dashboard main.container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.page-dashboard .card{
+    padding: 12px;
+}
+.page-dashboard .card + .card{
+    margin-top: 0 !important;
+}
+.page-dashboard .card p{
+    margin: 6px 0 0 !important;
+}

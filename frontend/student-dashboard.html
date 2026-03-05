@@ -4,25 +4,55 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Join class | Nigel</title>
+    <title>Dashboard | Nigel</title>
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 
-<body>
+<body class="page-dashboard">
     <div class="app">
         <header class="topbar">
-        <div class="topbar-inner">
-        <div class="brand">
-        <div class="brand-mark"></div>
-        <div>nigel</div>
+            <div class="topbar-inner">
+            <a href="brand" href="index.html">
+                <div class="brand-mark"></div>
+                <div>nigel</div>
+            </a>
+            <div></div>
+    
+            
+        <div class="search" role="search">
+            <input id="askNigel" type="text" placeholder="ask Nigel..." />
         </div>
-    </div>
-    <div class="search" role="search">
-        <span aria-hidden="true"></span>
-        <input id="askNigel" type="text" placeholder="ask Nigel" />
-    </div>
-    </div>
-</header>
+        <div class="topbar-right">
+            <button class="icon-btn" aria-label="Notifications">🔔</button>
+            <a class="btn" href="portal.html">Login</a>
+        </div>
+        </div>
+    
+        <nav class="site-nav">
+            <ul class="site-menu">
+                <li>
+                    <a class="active" href="index.html">Home</a>
+    
+                </li>
+                <li class="has-drop">
+                    <a href="modules.html">Modules</a>
+                    <ul class="drop">
+                        <li><a href="lesson.html?module=budgeting">Budgeting</a>
+                          <li><a href="lesson.html?module=needs-wants">Needs vs Wants</a></li> 
+                          <li><a href="lesson.html?module=scams">Scams</a></li> 
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="student-dashboard.html">Dashboard</a>
+                </li>
+                <li>
+                    <a href="progress.html">Progress</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
 
 <main class="container">
     <h1 class="h1">Welcome back</h1>
@@ -30,50 +60,54 @@
 
     <section class="card">
         <div class="card-row">
+        <div>
         <div class="badge">Today's task</div>
+
         <p style="margin: 10px 0 0; font-size: 14px; color: var(--text);">
             Budgeting basics
         </p>
+
         <p style="margin: 6px 0 0; font-size: 13px; color: var(--muted);">
             Learn how to split money into needs, wants, and savings.
         </p>
-           <div>
-            <a class="btn" href="modules.html">Start</a>
-           </div>
-    </section>
-    <section class="card">
-        <strong id="progressCount">0</strong>
-    </section>
-    <section class="card" style="margin-top: 12px;">
-        <div class="card-row">
-            <div>
-                <div class="badge">Class</div>
-                <p style="margin: 10px 0 0; font-size: 13px ; color: var(--muted);">
-                    <span id = "inviteCodeLabel"></span>
-                </p>
-            </div>
-            <button class="btn btn-ghost" id="logoutBtn">Reset</button>
+        </div>
+
+        <a class="btn" href="modules.html">Start</a>
+
         </div>
     </section>
-</main>
-<nav class="nav" aria-label="Bottom navigation">
-    <div class="nav-inner">
-        <a href="student-dashboard.html" class="active">
-            <span aria-hidden="true"></span>
-            <span>Home</span>
-        </a>
-        <a href="modules.html">
-            <span aria-hidden="true"></span>
-            <span>Modules</span>
-        </a>
-        <a href="progress.html">
-            <span aria-hidden="true"></span>
-            <span>Menu</span>
-        </a>
-    </div>
-</nav>
+
+    <section class="card">
+        <div class="card-row">
+            <div>
+                <div class="badge">Progress</div>
+    
+                <p style="margin-top: 10px;">
+                    Completed modules:
+                    <strong id="progressCount">0</strong>
+                </p>
+            </div>
+        </div>
+    </section>
+
+<section class="card">
+<div class="card-row">
+<div>
+<div class="badge">Class</div>
+<p style="margin: 10px 0 0; font-size: 13px; color: var(--muted);">
+<span id="inviteCodeLabel"></span>
+</p>
 </div>
+<button class="btn btn-ghost" id="logoutBtn">Reset</button>
+</div>
+</section>
+
+</main>
+
+</div>
+
 <script src="../js/auth.js"></script>
 <script src="../js/dashboard.js"></script>
+
 </body>
 </html>

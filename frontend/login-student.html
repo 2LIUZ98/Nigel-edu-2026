@@ -146,18 +146,31 @@
                 msg.textContent = "Logged in. Redirecting...";
                 msg.className = "msg ok";
 
-                setTimeout(() => {
+                setTimeout(() =>{
                     let joined = {};
                     try {
-                        joined = JSON.parse(localStorage.getItem("nigel_joined") || "{}");}
-                    catch {
-                        joined = {};
+                        joined = JSON.parse(localStorage.getItem("nigel_joined") || "{}");
+
+                    }catch {
+                        joined = {}
                     }
+                    const params = new URLSearchParams(window.location.search);
+                    const next = params.get("next");
+
+                    const safeNext = (v) =>{
+                        if (!v) return null;
+                        if (v.includes("://") || v.startsWith("/") || v.includes("..")) return null;
+                        if (!v.endsWith(".html") && !v.includes(".html?")) return null;
+                        return v;
+                    };
+                    const target = safeNext(next);
+
                     if (joined[user.id]) {
-                        console.log("Session before dashboard:", localStorage.getItem("nigel_session"));
-                        window.location.href = "student-dashboard.html";
-                    } else{
-                        window.location.href = "join.html";  
+                        window.location.href = target || "student-dashboard.html";
+                    } else {
+                        window.location.href = target
+                        ? `join.html?next=${encodeURIComponent(target)}`
+                        : "join.html";
                     }
                 }, 350);
             });

@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const raw = localStorage.getItem("nigel_student");
     if (!raw){
-        window.location.href = "login.html";
+        window.location.href = "login-student.html";
         return;
     }
     let student;
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
         student = JSON.parse(raw);
     } catch {
         localStorage.removeItem("nigel_student");
-        window.location.href = "login.html";
+        window.location.href = "login-student.html";
         return;
     }
 
