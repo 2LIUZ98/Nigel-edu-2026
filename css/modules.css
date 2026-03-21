@@ -1,0 +1,119 @@
+.modules-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid rgb(0, 0, 0, 0.06);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+.card:hover{
+    transform: scale(1.03);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+}
+
+.card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.card-title{
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.card-desc{
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+}
+
+.modules-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+}
+.module-card{
+    background: #ffffff;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 420px;
+}
+.module-card:hover{
+transform:  translate(-6px) scale(1.02);
+box-shadow: 0 22px 40px rgba(16, 24, 40, 0.14);
+cursor: pointer;
+}
+.module-image{
+    background: linear-gradient(180deg, #f8f4ff 0%, #f4f6fb 100%);
+    padding: 28px 28px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+}
+.module-image img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    display: block;
+}
+.module-content{
+    padding: 24px 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+.module-title{
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.module-desc{
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 34ch;
+}
+
+.module-content .btn,
+.module-content .btn-ghost{
+    margin-top: auto;
+    align-self: flex-start;
+}
+.module_link{
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+.badge {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+}

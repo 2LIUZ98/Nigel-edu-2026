@@ -305,3 +305,26 @@ button{
 .has-drop:hover .drop{
     display: block;
 }
+.card {
+    background: #fff;
+    border: 1px solid rgb(0, 0, 0, 0.06);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 18px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+.card:hover{
+    transform: scale(1.03);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+}
+
+.card-title{
+    margin: 10px;
+    font-weight: 700;
+}
+.card-desc{
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+}
