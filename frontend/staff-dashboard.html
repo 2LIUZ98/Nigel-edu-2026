@@ -165,9 +165,11 @@
 </section>
 </main>
 </div>
+
 <script src="../js/auth.js"></script>
+
 <script>
-  const readJSON = (k, fallback) => {
+    const readJSON = (k, fallback) => {
       try {
         const raw = localStorage.getItem(k);
         return raw ? JSON.parse(raw) : fallback;
@@ -175,6 +177,7 @@
         return fallback;
       }
     };
+
     const writeJSON = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 
     const makeCode = (len = 6) => {
@@ -187,13 +190,19 @@
     const fmtTime = (iso) => {
       try {
         const d = new Date(iso);
-        return d.toLocaleString(undefined, { year: "numeric", month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+        return d.toLocaleString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
       } catch {
         return iso;
       }
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const me = requireStaffOrRedirect();
       if (!me) return;
 
@@ -207,10 +216,9 @@
       const recentList = document.getElementById("recentList");
       const msg = document.getElementById("msg");
 
-      welcomeLine.textContent = `Logged in as ${me.firstName || ""} ${me.lastName || ""} (${me.role})`.trim();
+      let students = [];
 
-      const users = getUsers();
-      const students = users.filter(u => u.role === "student");
+      welcomeLine.textContent = `Logged in as ${me.firstName || ""} ${me.lastName || ""} (${me.role})`.trim();
 
       const showMsg = (text, ok = false) => {
         msg.textContent = text || "";
@@ -220,15 +228,20 @@
 
       const renderRecent = () => {
         const codes = readJSON("nigel_codes", []).slice().reverse().slice(0, 6);
+
         if (!codes.length) {
           recentList.innerHTML = `<li><span class="who">No codes yet</span><span class="meta">Generate one to see it here</span></li>`;
           return;
         }
 
-        const byId = Object.fromEntries(students.map(s => [s.id, s]));
+        const byId = Object.fromEntries(students.map(s => [String(s.student_id), s]));
+
         recentList.innerHTML = codes.map(c => {
-          const s = byId[c.studentId];
-          const who = s ? `${s.firstName} ${s.lastName}` : "Unknown student";
+          const who =
+            c.studentId === "all"
+              ? "All students"
+              : (byId[String(c.studentId)]?.full_name || "Unknown student");
+
           return `
             <li>
               <div>
@@ -241,13 +254,31 @@
         }).join("");
       };
 
-      if (!students.length) {
-        studentSelect.innerHTML = `<option value="">No students found (create a student account first)</option>`;
+      try {
+        const response = await fetch("http://localhost:3000/students");
+        students = await response.json();
+
+        if (!response.ok) {
+          throw new Error("Could not load students");
+        }
+
+        if (!students.length) {
+          studentSelect.innerHTML = `<option value="">No students found (create a student account first)</option>`;
+          genBtn.disabled = true;
+        } else {
+          studentSelect.innerHTML = `
+            <option value="all">Select all students</option>
+            ${students
+              .map(s => `<option value="${s.student_id}">${s.full_name} (${s.username})</option>`)
+              .join("")}
+          `;
+          genBtn.disabled = false;
+        }
+      } catch (error) {
+        console.error(error);
+        studentSelect.innerHTML = `<option value="">Could not load students</option>`;
         genBtn.disabled = true;
-      } else {
-        studentSelect.innerHTML = students
-          .map(s => `<option value="${s.id}">${s.firstName} ${s.lastName} (${s.email})</option>`)
-          .join("");
+        showMsg("Could not load students.");
       }
 
       genBtn.addEventListener("click", () => {
@@ -281,6 +312,7 @@
           showMsg("Nothing to copy yet.");
           return;
         }
+
         try {
           await navigator.clipboard.writeText(text);
           showMsg("Copied to clipboard.", true);
@@ -297,6 +329,5 @@
       renderRecent();
     });
 </script>
-<script src="../js/auth.js"></script>
 </body>
 </html>

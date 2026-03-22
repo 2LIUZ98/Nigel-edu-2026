@@ -17,12 +17,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
     const name = [student.firstName, student.lastName].filter(Boolean).join(" ");
-    if (greetingE1) greetingE1.textContent = name ? `Hi ${name}` : `Hi ${student.email}`;
-    const joined = readJSON("nigel_joined", {});
-    if (!joined[student.id]) {
-        window.location.href = "join.html";
-        return;
-    }
+    if (greetingE1) greetingE1.textContent = name ? `Hi ${name}` : `Hi ${student.username}`;
+    
+    //const joined = readJSON("nigel_joined", {});
+    //if (!joined[student.id]) {
+    //    window.location.href = "join.html";
+    //    return;
+    //}
   
   const allCodes = readJSON("nigel_codes", []);
   const myCodes = allCodes.filter(c => c.studentId === student.id);

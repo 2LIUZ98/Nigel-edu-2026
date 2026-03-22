@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Welcome | Nigel</title>
+    <title>Student Login | Nigel</title>
     <link rel="stylesheet" href="../css/main.css">
 <style>
     .auth-wrap{
@@ -89,8 +89,8 @@
                 <p class="muted">Log in to view your lessons, quizzes, and progress.</p>
                 <form id="loginStudentForm" novalidate>
                     <label class="field">
-                        <span>Email</span>
-                        <input id="email" type="email" autocomplete="email" required />
+                        <span>Username</span>
+                        <input id="username" type="text" autocomplete="username" required />
                     </label>
                     <label class="field">
                     <span>Password</span>
@@ -106,75 +106,67 @@
             </div>
         </main>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const form = document.getElementById("loginStudentForm");
-            const msg = document.getElementById("msg");
-            
-            const normaliseEmail = (v) => String (v || "").trim().toLowerCase();
-            const readUsers = () => {
-                try {return JSON.parse(localStorage.getItem("nigel_users") || "[]");}
-                catch { return [];}
-            };
-            form .addEventListener("submit", (e) =>{
-                e.preventDefault();
-                msg.textContent = "";
-                msg.className = "msg";
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("loginStudentForm");
+    const msg = document.getElementById("msg");
 
-                const email = normaliseEmail(document.getElementById("email").value);
-                const password = String(document.getElementById("password").value || "");
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        msg.textContent = "";
+        msg.className = "msg";
 
-                if (!email || !password){
-                    msg.textContent = "Please enter your email and password.";
-                    msg.className = "msg err";
-                    return;
-                }
-                const users = readUsers();
-                const user = users.find(u => normaliseEmail(u.email) === email && u.role === "student");
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
 
-                if (!user){
-                    msg.textContent = "Student account not found.";
-                    msg.className = "msg err";
-                    return;
-                }
-                if (String(user.password || "") !== password){
-                    msg.textContent = "Incorrect password";
-                    msg.className = "msg err";
-                    return;
-                }
-                localStorage.setItem("nigel_session", JSON.stringify({userId: user.id, role: user.role}));
-                msg.textContent = "Logged in. Redirecting...";
-                msg.className = "msg ok";
+        if (!username || !password) {
+            msg.textContent = "Please enter your username and password.";
+            msg.className = "msg err";
+            return;
+        }
 
-                setTimeout(() =>{
-                    let joined = {};
-                    try {
-                        joined = JSON.parse(localStorage.getItem("nigel_joined") || "{}");
-
-                    }catch {
-                        joined = {}
-                    }
-                    const params = new URLSearchParams(window.location.search);
-                    const next = params.get("next");
-
-                    const safeNext = (v) =>{
-                        if (!v) return null;
-                        if (v.includes("://") || v.startsWith("/") || v.includes("..")) return null;
-                        if (!v.endsWith(".html") && !v.includes(".html?")) return null;
-                        return v;
-                    };
-                    const target = safeNext(next);
-
-                    if (joined[user.id]) {
-                        window.location.href = target || "student-dashboard.html";
-                    } else {
-                        window.location.href = target
-                        ? `join.html?next=${encodeURIComponent(target)}`
-                        : "join.html";
-                    }
-                }, 350);
+        try {
+            const response = await fetch("http://localhost:3000/login/student", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
             });
-        });
-    </script>
+
+            let data = {};
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+
+            if (!response.ok) {
+                msg.textContent = data.message || "Login failed.";
+                msg.className = "msg err";
+                return;
+            }
+
+            localStorage.setItem("nigel_session", JSON.stringify({
+                userId: data.user.id,
+                role: data.user.role,
+                username: data.user.username
+            }));
+
+            msg.textContent = "Logged in. Redirecting...";
+            msg.className = "msg ok";
+
+            setTimeout(() => {
+                window.location.href = "student-dashboard.html";
+            }, 500);
+
+        } catch (error) {
+            msg.textContent = "Server not reachable.";
+            msg.className = "msg err";
+            console.error(error);
+        }
+    });
+});
+</script>
 </body>
 </html>

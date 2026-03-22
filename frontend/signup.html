@@ -103,8 +103,8 @@ letter-spacing: -0.02em;
             </label>
         </div>
         <label class="field">
-        <span>Email</span>
-        <input id="email" type="email" autocomplete="email" required />
+        <span>Username</span>
+        <input id="username" type="text" autocomplete="username" required />
         </label>
 
         <label class="field">
@@ -121,77 +121,80 @@ letter-spacing: -0.02em;
     </div>
     </main>
     <script>
-            document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("signupForm");
-      const msg = document.getElementById("msg");
+    document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("signupForm");
+    const msg = document.getElementById("msg");
 
-      const normaliseEmail = (v) => String(v || "").trim().toLowerCase();
-
-      const readUsers = () => {
-        try { return JSON.parse(localStorage.getItem("nigel_users") || "[]"); }
-        catch { return []; }
-      };
-
-      const writeUsers = (users) => {
-        localStorage.setItem("nigel_users", JSON.stringify(users));
-      };
-
-      const makeId = () => {
-        if (crypto && crypto.randomUUID) return crypto.randomUUID();
-        return String(Date.now()) + "_" + Math.random().toString(16).slice(2);
-      };
-
-      const setMsg = (text, ok = false) => {
+    const setMsg = (text, ok = false) => {
         msg.textContent = text || "";
         msg.className = ok ? "msg ok" : "msg err";
         if (!text) msg.className = "msg";
-      };
+    };
 
-      form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
         setMsg("");
 
         const role = document.getElementById("role").value;
         const firstName = String(document.getElementById("firstName").value || "").trim();
         const lastName = String(document.getElementById("lastName").value || "").trim();
-        const email = normaliseEmail(document.getElementById("email").value);
+        const username = String(document.getElementById("username").value || "").trim();
         const password = String(document.getElementById("password").value || "");
 
-        if (!role || !firstName || !lastName || !email || !password) {
-          setMsg("Please fill in all fields.");
-          return;
+        if (!role || !firstName || !lastName || !username || !password) {
+            setMsg("Please fill in all fields.");
+            return;
         }
 
         if (password.length < 8) {
-          setMsg("Password must be at least 8 characters.");
-          return;
+            setMsg("Password must be at least 8 characters.");
+            return;
         }
 
-        const users = readUsers();
-        const exists = users.some(u => normaliseEmail(u.email) === email);
-        if (exists) {
-          setMsg("That email is already registered. Try logging in.");
-          return;
+        const full_name = `${firstName} ${lastName}`.trim();
+
+        try {
+            const response = await fetch("http://localhost:3000/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                    role,
+                    full_name,
+                    first_name: firstName,
+                    last_name: lastName
+                })
+            });
+
+            let data = {};
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+
+            if (!response.ok) {
+                setMsg(data.message || "Registration failed.");
+                return;
+            }
+
+            setMsg("Account created. Redirecting...", true);
+
+            setTimeout(() => {
+                window.location.href = role === "student"
+                    ? "login-student.html"
+                    : "login-staff.html";
+            }, 500);
+
+        } catch (error) {
+            setMsg("Server not reachable.");
+            console.error(error);
         }
-
-        users.push({
-          id: makeId(),
-          role,
-          firstName,
-          lastName,
-          email,
-          password, 
-          createdAt: new Date().toISOString()
-        });
-
-        writeUsers(users);
-        setMsg("Account created. Redirecting...", true);
-
-        setTimeout(() => {
-          window.location.href = role === "student" ? "login-student.html" : "login-staff.html";
-        }, 400);
-      });
     });
-    </script>
+});
+</script>
 </div>
 </body>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Welcome | Nigel</title>
+    <title>Staff Login | Nigel</title>
     <link rel="stylesheet" href="../css/main.css">
 <style>
         .auth-wrap{
@@ -89,8 +89,8 @@
         <p class="muted">Teacher and parent access for managing students and generating codes.</p>
         <form id="loginStaffForm" novalidate>
             <label class="field">
-                <span>Email</span>
-                <input id="email" type="email" autocomplete="email" required />
+                <span>Username</span>
+                <input id="username" type="text" autocomplete="username" required />
             </label>
             <label class="field">
                 <span>Password</span>
@@ -107,56 +107,67 @@
         </main>
       </div>
       <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const form = document.getElementById("loginStaffForm");
-            const msg = document.getElementById("msg");
-            
-            const normaliseEmail = (v) => String(v || "").trim().toLowerCase();
-            const readUsers = () => {
-                try {return JSON.parse(localStorage.getItem("nigel_users") || "[]");}
-                catch {return [];}
-            };
-            form.addEventListener("submit", (e) => {
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("loginStaffForm");
+    const msg = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
         msg.textContent = "";
         msg.className = "msg";
 
-        const email = normaliseEmail(document.getElementById("email").value);
-        const password = String(document.getElementById("password").value || "");
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
 
-        if (!email || !password) {
-          msg.textContent = "Please enter your email and password.";
-          msg.className = "msg err";
-          return;
+        if (!username || !password) {
+            msg.textContent = "Please enter your username and password.";
+            msg.className = "msg err";
+            return;
         }
 
-        const users = readUsers();
-        const user = users.find(u =>
-          normaliseEmail(u.email) === email && (u.role === "teacher" || u.role === "parent")
-        );
+        try {
+            const response = await fetch("http://localhost:3000/login/staff", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username, password })
+            });
 
-        if (!user) {
-          msg.textContent = "Teacher/Parent account not found.";
-          msg.className = "msg err";
-          return;
+            let data = {};
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+
+            if (!response.ok) {
+                msg.textContent = data.message || "Login failed.";
+                msg.className = "msg err";
+                return;
+            }
+
+            localStorage.setItem("nigel_session", JSON.stringify({
+                userId: data.user.id,
+                role: data.user.role,
+                username: data.user.username
+            }));
+
+            msg.textContent = "Logged in. Redirecting...";
+            msg.className = "msg ok";
+
+            setTimeout(() => {
+                window.location.href = "staff-dashboard.html";
+            }, 500);
+
+        } catch (error) {
+            msg.textContent = "Server not reachable.";
+            msg.className = "msg err";
+            console.error(error);
         }
-
-        if (String(user.password || "") !== password) {
-          msg.textContent = "Incorrect password.";
-          msg.className = "msg err";
-          return;
-        }
-
-        localStorage.setItem("nigel_session", JSON.stringify({ userId: user.id, role: user.role }));
-        msg.textContent = "Logged in. Redirecting…";
-        msg.className = "msg ok";
-
-        setTimeout(() => {
-          window.location.href = "staff-dashboard.html";
-        }, 350);
-      });     
-        });
-      </script>  
+    });
+});
+</script>
     </body>
 </html>
     
