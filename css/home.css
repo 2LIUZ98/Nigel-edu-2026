@@ -66,8 +66,19 @@
 }
 
 .feature-icon{
-    font-size: 28px;
-    margin-bottom: 12px;
+   width: 56px;
+   height: 56px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   border-radius: 14px;
+   background: #efe7ff;
+}
+.feature-icon svg{
+    width: 28px;
+    height: 28px;
+    stroke: #7c3aed;
 }
 .info-card{
     background: #ffffff;
