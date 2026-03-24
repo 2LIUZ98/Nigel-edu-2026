@@ -19,6 +19,57 @@
               <div class="search" role="search">
                 <input id="askNigel" type="text" placeholder="ask Nigel..."/>
               </div>
+              <div class="topbar-right" style="position: relative; z-index: 2000;">
+                    <div id="notifWrap" style="position: relative; display: inline-block;">
+                        <button
+                            class="icon-btn"
+                            id="notifBtn"
+                            aria-label="Notifications"
+                            type="button"
+                            style="position: relative; z-index: 2002;"
+                        >🔔</button>
+
+                        <span id="notifBadge" style="
+                            display:none;
+                            position:absolute;
+                            top:-6px;
+                            right:-6px;
+                            min-width:18px;
+                            height:18px;
+                            border-radius:999px;
+                            background:red;
+                            color:white;
+                            font-size:12px;
+                            line-height:18px;
+                            text-align:center;
+                            font-weight:700;
+                            padding:0 5px;
+                            z-index:2003;
+                            pointer-events:none;
+                        ">0</span>
+
+                        <div id="notifPanel" style="
+                            display:none;
+                            position:absolute;
+                            right:0;
+                            top:42px;
+                            width:320px;
+                            max-height:300px;
+                            overflow:auto;
+                            background:white;
+                            border:1px solid rgba(0,0,0,0.12);
+                            border-radius:12px;
+                            padding:12px;
+                            box-shadow:0 10px 30px rgba(0,0,0,0.12);
+                            z-index:2001;
+                        ">
+                            <h3 style="margin:0 0 10px;">Notifications</h3>
+                            <div id="notifList">No notifications</div>
+                        </div>
+                    </div>
+
+                    <a class="btn" href="portal.html">Login</a>
+                </div>
             </div>
             <nav class="site-nav">
               <ul class="site-menu">
@@ -84,5 +135,7 @@
 </div>
 <script src="../js/auth.js"></script>
 <script src ="../js/lesson.js"></script>
+<script src="../js/notification.js"></script>
+
 </body>
 </html>

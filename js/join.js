@@ -1,72 +1,80 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const student = requireStudentOrRedirect();
+  if (!student) return;
 
-    const me = requireStudentOrRedirect ();
-    if (!me) return;
+  const form = document.getElementById("joinForm");
+  const msg = document.getElementById("msg");
+  const joinTitle = document.getElementById("joinTitle");
 
-  
-    const form = document.getElementById("joinForm");
-    const nameE1 = document.getElementById("studentName");
-    const codeE1 = document.getElementById("inviteCode");
-    const msgE1 = document.getElementById("msg");
+  const params = new URLSearchParams(window.location.search);
+  const moduleSlug = params.get("module");
 
-    const readJSON = (k, fallback) => {
-        try{
-            const raw = localStorage.getItem(k);
-            return raw ? JSON.parse(raw) : fallback;
-        } catch {
-            return fallback;
-        }
-    };
-    const writeJSON = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+  const moduleTitles = {
+    "budgeting": "Join Budgeting",
+    "needs-wants": "Join Needs vs Wants",
+    "scams": "Join Scams"
+  };
 
-    const showMsg = (text, ok = false) => {
-        if (!msgE1) return;
-        msgE1.textContent = text || "";
-        msgE1.className = ok ? "msg ok" : "msg err";
-        if (!text) msgE1.className = "msg";
-    };
-    const joined = readJSON("nigel_joined", {});
-    if (joined[me.id]){
-        window.location.href = "student-dashboard.html";
-        return;
+  if (joinTitle) {
+    joinTitle.textContent = moduleTitles[moduleSlug] || "Join module";
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+    msg.className = "msg";
+
+    const code = document.getElementById("inviteCode").value.trim();
+
+    if (!moduleSlug) {
+      msg.textContent = "No module selected.";
+      msg.className = "msg err";
+      return;
     }
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        showMsg("");
-    
-        const name = String(nameE1.value || "").trim();
-        const codeIn = String(codeE1.value || "").trim().toUpperCase();
-    
-        if (!name) return showMsg("Please enter your name.");
-        if (!codeIn) return showMsg("Please enter your invite code.");
-    
-        const codes = readJSON("nigel_codes", []);
-        const match = codes.find(c => String(c.code || "").toUpperCase() === codeIn);
-    
-        if (!match) return showMsg("Invite code not found. Please check and try again.");
-    
-        if (String(match.studentId) !== String(me.id)) {
-          return showMsg("That code is not linked to your account.");
-        }
-   
-        joined[me.id] = {
-          joinedAt: new Date().toISOString(),
-          nameUsed: name,
-          codeUsed: match.code
-        };
-        writeJSON("nigel_joined", joined);
-    
 
-        const users = readJSON("nigel_users", []);
-        const i = users.findIndex(u => String(u.id) === String(me.id));
-        if (i !== -1) {
-          const parts = name.split(" ").filter(Boolean);
-          users[i].firstName = parts[0] || users[i].firstName || "";
-          users[i].lastName = parts.slice(1).join(" ") || users[i].lastName || "";
-          writeJSON("nigel_users", users);
-        }
-    
-        showMsg("Joined successfully.", true);
-        window.location.href = "student-dashboard.html";
-});
+    if (!code) {
+      msg.textContent = "Please enter your invitation code.";
+      msg.className = "msg err";
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/verify-invitation-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          student_id: student.id,
+          module_slug: moduleSlug,
+          code
+        })
+      });
+
+      let data = {};
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
+
+      if (!response.ok) {
+        msg.textContent = data.message || "Code verification failed.";
+        msg.className = "msg err";
+        return;
+      }
+
+      msg.textContent = "Code verified. Redirecting...";
+      msg.className = "msg ok";
+
+      setTimeout(() => {
+        window.location.href = `lesson.html?module=${encodeURIComponent(moduleSlug)}`;
+      }, 500);
+
+    } catch (error) {
+      msg.textContent = "Server not reachable.";
+      msg.className = "msg err";
+      console.error(error);
+    }
+  });
 });

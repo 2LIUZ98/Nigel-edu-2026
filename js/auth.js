@@ -28,12 +28,13 @@ window.getCurrentUser = window.getCurrentUser || function () {
     if (!session || !session.userId || !session.role) return null;
 
     return {
-        id: session.userId,
-        role: session.role,
-        username: session.username || "",
-        firstName: session.first_name || "",
-        lastName: session.last_name || ""
-    };
+    id: session.userId,
+    studentId: session.studentId || null,
+    role: session.role,
+    username: session.username || "",
+    firstName: session.first_name || "",
+    lastName: session.last_name || ""
+};
 };
 
 window.requireStudentOrRedirect = window.requireStudentOrRedirect || function () {

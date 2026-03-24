@@ -149,8 +149,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             localStorage.setItem("nigel_session", JSON.stringify({
                 userId: data.user.id,
+                studentId: data.user.student_id,
                 role: data.user.role,
-                username: data.user.username
+                username: data.user.username,
+                first_name: data.user.first_name || "",
+                last_name: data.user.last_name || ""
             }));
 
             msg.textContent = "Logged in. Redirecting...";

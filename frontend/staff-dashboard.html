@@ -131,7 +131,7 @@
 <div class="top">
 <div>
     <h1>Staff dashboard</h1>
-    <p class="muted" id="welcomeLine">Manage students and generate acess codes.</p>
+    <p class="muted" id="welcomeLine">Manage students and generate access codes.</p>
 </div>
 <div class="actions">
     <a class="btn ghost" href="portal.html">Portal</a>
@@ -141,10 +141,21 @@
 <div class="grid">
     <div class="card">
         <h2>Generate a code</h2>
+
+        <label class="field">
+            <span>Select a module</span>
+            <select id="moduleSelect">
+                <option value="">Choose a module</option>
+                <option value="1">Budgeting</option>
+                <option value="2">Needs vs Wants</option>
+                <option value="3">Scams</option>
+            </select>
+        </label>
         <label class="field">
             <span>Select a student</span>
             <select id="studentSelect"></select>
         </label>
+
         <button class="btn primary" id="genBtn" type="button">Generate code</button>
         <div class="code-box" aria-live="polite">
         <div>
@@ -153,7 +164,7 @@
         </div>
         <button class="btn ghost small" id="copyBtn" type="button">Copy</button>
         </div>
-        <p class="hint">Codes are stored locally for now (localStorage). Later, we'll store them in MongoDB.</p>
+        <p class="hint">Codes are stored in the Nigel database.</p>
         <p id="msg" class="msg"></p>
     </div>
     <div class="card">
@@ -281,29 +292,53 @@
         showMsg("Could not load students.");
       }
 
-      genBtn.addEventListener("click", () => {
+        genBtn.addEventListener("click", async () => {
         showMsg("");
 
         const studentId = studentSelect.value;
+        const moduleId = document.getElementById("moduleSelect").value;
+
+        if (!moduleId) {
+          showMsg("Please select a module.");
+          return;
+        }
+
         if (!studentId) {
           showMsg("Please select a student.");
           return;
         }
 
-        const code = makeCode(6);
-        const codes = readJSON("nigel_codes", []);
+        try {
+          const response = await fetch("http://localhost:3000/invitation-codes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              module_id: moduleId,
+              student_id: studentId,
+              created_by_user_id: me.id
+            })
+          });
 
-        codes.push({
-          code,
-          studentId,
-          createdByUserId: me.id,
-          createdAt: new Date().toISOString()
-        });
+          let data = {};
+          try {
+            data = await response.json();
+          } catch {
+            data = {};
+          }
 
-        writeJSON("nigel_codes", codes);
-        codeOut.textContent = code;
-        renderRecent();
-        showMsg("Code generated.", true);
+          if (!response.ok) {
+            showMsg(data.message || "Could not create code.");
+            return;
+          }
+
+          codeOut.textContent = data.code || "—";
+          showMsg(data.message || "Code created.", true);
+        } catch (error) {
+          console.error(error);
+          showMsg("Server not reachable.");
+        }
       });
 
       copyBtn.addEventListener("click", async () => {
