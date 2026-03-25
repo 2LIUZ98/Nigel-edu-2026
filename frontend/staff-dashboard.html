@@ -6,115 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Welcome | Nigel</title>
     <link rel="stylesheet" href="../css/main.css">
-<style>
+    <link rel="stylesheet" href="../css/staff-dashboard.css">
 
-    .page-wrap{
-        min-height: calc(100vh - 72px);
-        display: grid;
-        place-items: start center;
-        padding: 28px 16px;
-    }
-    .panel{
-        width: min(980px, 100%);
-        background: #f7f7f9;
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        border-radius: 18px;
-        padding: 22px;
-    }
-    .top{
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 18px;
-    }
-    .top h1{
-        margin: 0;
-        font-size: 28px;
-        letter-spacing: -0.02em;
-    }
-    .muted{opacity: 0.75; margin: 6px 0 0;}
-    .actions{display: flex; gap: 10px; align-items: center;}
-
-    .btn{
-        border: 0;
-        border-radius: 12px;
-        padding: 10px 12px;
-        cursor: pointer;
-        font-weight: 800;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-    }
-    .btn.primary{background: #2f78d6; color: #fff;}
-    .btn.ghost{background: transparent; border: 1px solid rgba(0, 0, 0, 0.12); color: #111;}
-    .btn.small{padding: 8px 10px; font-weight: 700;}
-
-    .grid{
-        display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 16px;
-        align-items: start;
-    }
-    @media (max-width: 860px){
-        .grid{grid-template-columns: 1fr;}
-    }
-    .card{
-        background: #fff;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 16px;
-        padding: 16px;
-    }
-    .card h2{
-        margin: 0 0 10px;
-        font-size: 18px;
-    }
-    .field{display: grid; gap: 8px; margin-bottom: 12px;}
-    .field span{ font-weight: 700; font-size: 14px;}
-    select{
-        width: 100%;
-        padding: 12px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(0, 0, 0, 0.12);
-        background: #fff;
-        outline: none;
-    }
-    .code{
-        font-size: 22px;
-        font-weight: 900;
-        letter-spacing: 0.12em;
-    }
-    .hint{
-        margin: 10px 0 0;
-        opacity: 0.75;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-    .list{
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        display: none;
-        gap: 10px;
-    }
-    .list li{
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #fff;
-    }
-    .who{font-weight: 800;}
-    .meta{opacity: 0.75; font-size: 13px;}
-    .msg{margin-top: 12px; font-weight:13px}
-    .msg.err{color: #b00020;}
-    .msg.ok{color: #0b6b2f;}
-</style>
 </head>
 <body>
 <div class="app">
@@ -134,8 +27,8 @@
     <p class="muted" id="welcomeLine">Manage students and generate access codes.</p>
 </div>
 <div class="actions">
-    <a class="btn ghost" href="portal.html">Portal</a>
-    <button class="btn ghost" id="logoutBtn" type="button">Log out</button>
+    <a class="btn primary" href="portal.html">Portal</a>
+    <button class="btn primary" id="logoutBtn" type="button">Log out</button>
 </div>
 </div>
 <div class="grid">
@@ -162,7 +55,7 @@
         <div class="meta">Latest code</div>
         <div class="code" id="codeOut">—</div>
         </div>
-        <button class="btn ghost small" id="copyBtn" type="button">Copy</button>
+        <button class="btn primary" id="copyBtn" type="button">Copy</button>
         </div>
         <p class="hint">Codes are stored in the Nigel database.</p>
         <p id="msg" class="msg"></p>

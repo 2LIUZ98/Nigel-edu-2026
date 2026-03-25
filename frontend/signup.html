@@ -6,68 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Create account | Nigel</title>
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/signup.css">
 
-<style>
-.auth-wrap{
-    min-height: calc(100vh - 72px);
-    display: grid;
-    place-items: center;
-    padding: 32px 16px;
-}
-.auth-card{
-width: min(560px, 100%);
-border-radius: 18px;
-padding: 22px;
-background: #f7f7f9;
-border: 1px solid rgba(0, 0, 0, 0.06);
-text-align: left;
-}
-.auth-card h1{
-margin: 0 0 8px;
-font-size: 28px;
-letter-spacing: -0.02em;
-}
-.muted{opacity: 0.75; margin: 0 0 18px;}
-.row{display: grid; grid-template-columns: 1fr 1fr; gap: 12px;}
-@media (max-width: 560px){.row{grid-template-columns: 1fr;}}
-.field{display: grid; gap: 8px; margin-bottom: 14px;}
-.field span{font-weight: 700; font-size: 14px;}
-.field input, .field select{
-    width: 100%;
-    padding: 12px 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    background: #fff;
-    outline: none; 
-}
-.btn{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border: 0;
-    border-radius: 12px;
-    padding: 12px 14px;
-    color:  #fff;
-    font-weight: 900;
-    cursor: pointer;
-    text-decoration: none;
-    background: #111;
-    width: 100%;
-}
-.links{
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 12px;
-    font-size: 14px;
-    opacity: 0.85;
-}
-.links a{text-decoration: none;}
-.msg{margin-top: 12px; font-weight: 800;}
-.msg.err{color: #b00020;}
-.msg.ok{color: #0b6b2f;}
-</style>
 </head>
 <body>
 <div class="app">
@@ -111,7 +51,7 @@ letter-spacing: -0.02em;
           <span>Password</span>
           <input id="password" type="password" minlength="8" autocomplete="new-password" required />  
         </label>
-        <button class="btn" type="submit">Create account</button>
+        <button class="btn btn-primary" type="submit">Create account</button>
         <p id="msg" class="msg" aria-live="polite"></p>
         <div class="links">
             <a href="portal.html">Back</a>

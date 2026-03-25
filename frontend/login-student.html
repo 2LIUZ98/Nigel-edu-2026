@@ -6,72 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Student Login | Nigel</title>
     <link rel="stylesheet" href="../css/main.css">
-<style>
-    .auth-wrap{
-        min-height: calc(100vh - 72px);
-        display: grid;
-        place-items: center;
-        padding: 32px 16px;
-    }
-    .auth-card{
-        width: min(520px, 100%);
-        border-radius: 18px;
-        padding: 22px;
-        background: #f7f7f9;
-        border: 1px solid rgba(0,0,0,0.06);
-        text-align: left;
-    }
-    .auth-card h1{
-        margin: 0 0 8px;
-        font-size: 28px;
-        letter-spacing: -0.02em;
-    }
-    .muted{opacity: 0.75; margin: 0 0 18px;}
-    .field{display: grid; gap: 8px; margin-bottom: 14px;}
-    .field span{font-weight: 700; font-size: 14px;}
-    .field input{
-        width: 100%;
-        padding: 12px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(0, 0, 0, 0.12);
-        background: #fff;
-        outline: none;
-    }
-    .row{
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: 8px;
-    }
-    .btn{
-     display: inline-flex;
-     align-items: center;
-     justify-content: center;
-     gap: 10px;
-     border: 0;
-     border-radius: 12px;
-     padding: 12px 14px;
-     color: #fff;
-     font-weight: 800;
-     cursor: pointer;
-     text-decoration: none;
-     background: #d80b1f;
-     width: 100%;
-    }
-    .msg{margin-top: 12px; font-weight: 700;}
-    .msg.err{ color: #b00020;}
-    .msg.ok{color: #0b6b2f;}
-    .links{
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        margin-top: 12px;
-        font-size: 14px;
-        opacity: 0.85;
-    }
-    .links a{text-decoration: none;}
-</style>
+    <link rel="stylesheet" href="../css/login-student.css">
+
+
 </head>
 <body>
     <div class="app">
@@ -96,7 +33,7 @@
                     <span>Password</span>
                     <input id="password" type="password" autocomplete="current-password" required />
                     </label>
-                    <button class="btn" type="submit">Log in</button>
+                    <button class="btn btn-primary" type="submit">Log in</button>
                     <p id="msg" class="msg" aria-live="polite"></p>
                     <div class="links">
                         <a href="portal.html">Back</a>
