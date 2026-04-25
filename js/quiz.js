@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
     
       let score = 0;
+      const answersToSave = [];
     
       for (const q of quiz.questions) {
         const chosen = form.querySelector(`input[name="${q.id}"]:checked`);
@@ -145,30 +146,13 @@ document.addEventListener("DOMContentLoaded", () => {
           score++;
         }
     
-        const payload = {
-          student_id: student.id,
-          module_id: moduleId === "budgeting" ? 1 :
-                     moduleId === "needs-wants" ? 2 :
-                     moduleId === "scams" ? 3 : 1,
-          question_id: q.id,
-          selected_answer: chosen.value,
-          correct_answer: q.correct
-        };
-    
-        console.log("Sending quiz answer:", payload);
-    
-        await fetch("http://localhost:3000/quiz/submit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
-    
         const options = form.querySelectorAll(`input[name="${q.id}"]`);
     
         options.forEach(input => {
           const label = input.parentElement;
+    
+          label.style.color = "";
+          label.style.fontWeight = "";
     
           if (input.value === q.correct) {
             label.style.color = "green";
@@ -179,17 +163,42 @@ document.addEventListener("DOMContentLoaded", () => {
             label.style.color = "red";
             label.style.fontWeight = "700";
           }
+        });
     
+        answersToSave.push({
+          student_id: student.id,
+          module_id: moduleId === "budgeting" ? 1 :
+                     moduleId === "needs-wants" ? 2 :
+                     moduleId === "scams" ? 3 : 1,
+          question_id: q.id,
+          selected_answer: chosen.value,
+          correct_answer: q.correct
         });
       }
     
       msg.textContent = `You scored ${score} out of ${quiz.questions.length}.`;
-
-    setTimeout(() => {
-      window.location.href = "student-dashboard.html?updated=1";
-    }, 2000);
+    
+      if (score !== quiz.questions.length) {
+        msg.textContent += " Check the highlighted answers and try again.";
+        return;
+      }
+    
+      for (const payload of answersToSave) {
+        await fetch("http://localhost:3000/quiz/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+    
       const submitBtn = document.getElementById("submitQuiz");
       submitBtn.disabled = true;
       submitBtn.textContent = "Submitted";
+    
+      setTimeout(() => {
+        window.location.href = "student-dashboard.html?updated=1";
+      }, 2000);
     });
   });
