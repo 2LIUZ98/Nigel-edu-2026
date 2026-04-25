@@ -436,6 +436,92 @@ app.post('/notifications/mark-read', async (req, res) => {
   }
 });
 
+// Submit quiz answer and update progress
+app.post('/quiz/submit', async (req, res) => {
+  const { student_id, module_id, question_id, selected_answer, correct_answer } = req.body;
+  console.log("Quiz submit received:", req.body);
+
+  if (!student_id || !module_id || !question_id || !selected_answer || !correct_answer) {
+    return res.status(400).json({ message: 'Missing quiz answer data.' });
+  }
+
+  const isCorrect = selected_answer === correct_answer;
+
+  try {
+    await pool.query(
+      `INSERT INTO quiz_answers
+       (student_id, module_id, question_id, selected_answer, correct_answer, is_correct)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [student_id, module_id, question_id, selected_answer, correct_answer, isCorrect]
+    );
+
+    const progressResult = await pool.query(
+      `SELECT 
+         COUNT(*) AS total_questions,
+         SUM(CASE WHEN is_correct THEN 1 ELSE 0 END) AS correct_answers
+       FROM quiz_answers
+       WHERE student_id = $1 AND module_id = $2`,
+      [student_id, module_id]
+    );
+
+    const totalQuestions = Number(progressResult.rows[0].total_questions);
+    const correctAnswers = Number(progressResult.rows[0].correct_answers || 0);
+    const progressPercent = Math.round((correctAnswers / totalQuestions) * 100);
+    const completed = progressPercent === 100 ? 1 : 0;
+
+    await pool.query(
+      `INSERT INTO progress
+       (student_id, module_id, progress_percent, completed, last_updated)
+       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+       ON CONFLICT (student_id, module_id)
+       DO UPDATE SET
+         progress_percent = EXCLUDED.progress_percent,
+         completed = EXCLUDED.completed,
+         last_updated = CURRENT_TIMESTAMP`,
+      [student_id, module_id, progressPercent, completed]
+    );
+
+    return res.status(201).json({
+      message: 'Quiz answer saved.',
+      is_correct: isCorrect,
+      progress_percent: progressPercent,
+      completed
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error saving quiz answer.' });
+  }
+});
+// Get progress for one student 
+app.get('/progress/:studentId', async (req, res) =>{
+  const {studentId} = req.params;
+
+  try{
+    const result = await pool.query(
+      `SELECT
+        p.student_id,
+        p.module_id,
+        m.module_name,
+        m.slug,
+        p.progress_percent,
+        p.completed,
+        p.last_updated
+      FROM progress p
+      JOIN modules m ON p.module_id = m.id
+      WHERE p.student_id = $1
+      ORDER BY m.id ASC`,
+      [studentId]
+    );
+    return res.status(200).json(result.rows);
+
+  }catch (error){
+    console.error(error);
+    return res.status(500).json({ message: 'Error loading progress'});
+  }
+
+});
+
 app.listen(PORT, () => {
   console.log(`Server läuft auf http://localhost:${PORT}`);
 });

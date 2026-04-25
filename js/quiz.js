@@ -126,48 +126,70 @@ document.addEventListener("DOMContentLoaded", () => {
       container.appendChild(section);
     });
   
-    form.addEventListener("submit", e => {
+    form.addEventListener("submit", async e => {
       e.preventDefault();
-  
+    
       let score = 0;
-  
+    
       for (const q of quiz.questions) {
-        const chosen = form.querySelector(
-          `input[name="${q.id}"]:checked`
-        );
-  
+        const chosen = form.querySelector(`input[name="${q.id}"]:checked`);
+    
         if (!chosen) {
           alert("Please answer all questions before submitting.");
           return;
         }
-  
-        if (chosen.value === q.correct) score++;
+    
+        const isCorrect = chosen.value === q.correct;
+    
+        if (isCorrect) {
+          score++;
+        }
+    
+        const payload = {
+          student_id: student.id,
+          module_id: moduleId === "budgeting" ? 1 :
+                     moduleId === "needs-wants" ? 2 :
+                     moduleId === "scams" ? 3 : 1,
+          question_id: q.id,
+          selected_answer: chosen.value,
+          correct_answer: q.correct
+        };
+    
+        console.log("Sending quiz answer:", payload);
+    
+        await fetch("http://localhost:3000/quiz/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+    
+        const options = form.querySelectorAll(`input[name="${q.id}"]`);
+    
+        options.forEach(input => {
+          const label = input.parentElement;
+    
+          if (input.value === q.correct) {
+            label.style.color = "green";
+            label.style.fontWeight = "700";
+          }
+    
+          if (input.checked && input.value !== q.correct) {
+            label.style.color = "red";
+            label.style.fontWeight = "700";
+          }
+    
+        });
       }
-  
-      if (!student.progress) student.progress = {};
-  
-      const prev = student.progress[moduleId] || {};
-      const attempts = (prev.attempts || 0) + 1;
-  
-      student.progress[moduleId] = {
-        completed: true,
-        score,
-        total: quiz.questions.length,
-        attempts,
-        lastCompleted: new Date().toISOString()
-      };
-  
-      const users = getUsers();
-      const idx = users.findIndex(u => String(u.id) === String(student.id));
+    
+      msg.textContent = `You scored ${score} out of ${quiz.questions.length}.`;
 
-      if (idx !== -1){
-        users[idx] = student;
-      } else {
-        users.push(student)
-      }
-      writeJSON("nigel_users", users);
-
+    setTimeout(() => {
       window.location.href = "student-dashboard.html?updated=1";
+    }, 2000);
+      const submitBtn = document.getElementById("submitQuiz");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitted";
     });
   });
-  
