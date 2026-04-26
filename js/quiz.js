@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
         options: [
             {v: "a", t: "Heating at home"},
             {v: "b", t: "School uniform"},
-            {v: "c", t: "Streamin subscription"},
+            {v: "c", t: "Streaming subscription"},
         ]
     }
 
