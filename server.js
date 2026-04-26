@@ -4,6 +4,8 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const pool = require('./db');
+const e = require('express');
+const { error } = require('console');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +24,7 @@ app.get('/', (req, res) => {
 
 // Registrierung
 app.post('/register', async (req, res) => {
-  const { username, password, role, full_name, first_name, last_name } = req.body;
+  const { username, password, role, full_name, first_name, last_name, child_username } = req.body;
 
   if (!username || !password || !role || !first_name || !last_name) {
     return res.status(400).json({ message: 'Bitte alle Pflichtfelder ausfüllen.' });
@@ -56,6 +58,7 @@ app.post('/register', async (req, res) => {
         return res.status(400).json({ message: 'Studenten brauchen einen Namen.' });
       }
 
+
       const insertStudentSql = `
         INSERT INTO students (user_id, full_name)
         VALUES ($1, $2)
@@ -72,7 +75,46 @@ app.post('/register', async (req, res) => {
         }
       });
     }
+    if (role === 'parent'){
+      if (!child_username){
+        return res.status(400).json({message: 'Child username is required for parents accounts.'});
+      }
+      const childResults = await pool.query(
+        `SELECT s.id AS student_id
+          FROM students s
+          JOIN users u ON s.user_id = u.id
+          WHERE u.username = $1
+            AND u.role = 'student'
+         `,
+         [child_username]
+      );
+      const child = childResults.rows[0];
 
+      if (!child){
+        await pool.query(
+          `DELETE FROM users WHERE id = $1`,
+          [userId]
+        );
+        return res.status(400).json({message: 'Child student account not found.'});
+      }
+     const linkResult = await pool.query(
+      `INSERT INTO parent_student (parent_user_id, student_id)
+        VALUES ($1, $2)
+        ON CONFLICT (parent_user_id, student_id) DO NOTHING
+        RETURNING *`,
+        [userId, child.student_id]
+     );
+     if (linkResult.rowCount === 0) {
+      return res.status(200).json({
+        message: 'Parent already linked to this child',
+        user: {
+          id: userId,
+          username,
+          role
+        }
+      });
+     }
+    }
     return res.status(201).json({
       message: 'Account erfolgreich registriert.',
       user: {
@@ -277,7 +319,36 @@ app.post('/invitation-codes', async (req, res) => {
 
   try {
     await client.query('BEGIN');
-
+    const creatorResult = await client.query(
+      `SELECT role FROM users WHERE id = $1`,
+      [created_by_user_id]
+    );
+    
+    const creator = creatorResult.rows[0];
+    
+    if (!creator) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ message: 'Creator user not found.' });
+    }
+    
+    if (creator.role === 'parent') {
+      if (student_id === 'all') {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ message: 'Parents can only create codes for their own child.' });
+      }
+    
+      const parentCheck = await client.query(
+        `SELECT id FROM parent_student
+         WHERE parent_user_id = $1
+           AND student_id = $2`,
+        [created_by_user_id, student_id]
+      );
+    
+      if (!parentCheck.rows.length) {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ message: 'You can only create codes for your own child.' });
+      }
+    }
     if (student_id === 'all') {
       const studentsResult = await client.query(`SELECT id FROM students`);
       const students = studentsResult.rows;
@@ -522,6 +593,76 @@ app.get('/progress/:studentId', async (req, res) =>{
 
 });
 
+app.get('/staff/student-results/:userId/:role', async (req, res) => {
+  const {userId, role} = req.params;
+
+  try{
+    let sql;
+    let params;
+
+    if (role === 'teacher'){
+      sql = `
+      SELECT 
+        s.id AS student_id,
+        s.full_name,
+        m.module_name,
+        p.progress_percent,
+        p.completed,
+        p.last_updated
+      FROM progress p
+      JOIN students s ON p.student_id = s.id
+      JOIN modules m ON p.module_id = m.id
+      ORDER BY s.full_name ASC, m.id ASC
+      `;
+      params = [];
+    } else if (role === 'parent'){
+      sql = `
+      SELECT 
+        s.id AS student_id,
+        s.full_name,
+        m.module_name,
+        p.progress_percent,
+        p.completed,
+        p.last_updated
+      FROM progress p
+      JOIN students s ON p.student_id = s.id
+      JOIN modules m ON p.module_id = m.id
+      JOIN parent_student ps ON ps.student_id = s.id
+      WHERE ps.parent_user_id = $1
+      ORDER BY s.full_name ASC, m.id ASC
+      `;
+      params = [userId];
+    } else{
+      return res.status(403).json({message: 'Invalid role.'});
+    }
+    const result = await pool.query( sql, params);
+    return res.status(200).json(result.rows);
+
+  } catch (error){
+    console.error(error);
+    return res.status(500).json({message: 'Error loading student results.'});
+  }
+});
+
+app.get('/parent/children/:parentId', async (req, res) => {
+  const {parentId} = req.params;
+
+  try{
+    const result = await pool.query(
+      `SELECT s.id As student_id, s.full_name, u.username
+      FROM parent_student ps
+      JOIN students s ON ps.student_id = s.id
+      JOIN users u ON s.user_id = u.id
+      WHERE ps.parent_user_id = $1`,
+      [parentId]
+    );
+    return res.status(200).json(result.rows);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({message: 'Error loading linked children.'});
+  }
+
+});
 app.listen(PORT, () => {
   console.log(`Server läuft auf http://localhost:${PORT}`);
 });
