@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async() => {
   const student = requireStudentOrRedirect();
   if (!student) return;
 
@@ -32,12 +32,19 @@ document.addEventListener("DOMContentLoaded", () => {
     inviteCodeLabelEl.textContent = latest ? latest.code : "No code generated yet";
   }
 
-  const progressAll = readJSON("nigel_progress", {});
-  const p = progressAll[student.studentId] || null;
-  const modulesDone = p && Array.isArray(p.modulesCompleted) ? p.modulesCompleted.length : 0;
+  const studentDBId = student.studentId || student.student_id || student.id;
 
-  if (progressCountEl) {
-    progressCountEl.textContent = String(modulesDone);
+  try{
+    const response = await fetch(`http://localhost:3000/progress/${studentDBId}`);
+    const progressData = await response.json();
+
+    const completedModules = progressData.filter(item => item.completed === 1 || item.completed === true)
+
+    if (progressCountEl){
+      progressCountEl.textContent = String(completedModules.length);
+    }
+  } catch (error){
+    console.error("Error loading dashboard progress:", error);
   }
 
   if (logoutBtn) {

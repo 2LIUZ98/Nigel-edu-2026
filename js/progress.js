@@ -5,8 +5,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const completedList = document.getElementById("completedList");
   const badgeList = document.getElementById("badgeList");
 
+  const studentDBId = student.studentId || student.student_id || student.id;
+
   try {
-    const response = await fetch(`http://localhost:3000/progress/${student.id}`);
+    const response = await fetch(`http://localhost:3000/progress/${studentDBId}`);
     const progressData = await response.json();
 
     if (!progressData.length) {

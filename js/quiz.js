@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     
         answersToSave.push({
-          student_id: student.id,
+          student_id: student.studentId || student.student_id || student.id,
           module_id: moduleId === "budgeting" ? 1 :
                      moduleId === "needs-wants" ? 2 :
                      moduleId === "scams" ? 3 : 1,

@@ -39,13 +39,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
+      console.log("Student session:", student);
+      console.log("Sending student_id:", student.studentId || student.student_id || student.id);
       const response = await fetch("http://localhost:3000/verify-invitation-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          student_id: student.id,
+          student_id: student.studentId || student.student_id || student.id,
           module_slug: moduleSlug,
           code
         })
