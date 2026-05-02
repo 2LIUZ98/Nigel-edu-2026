@@ -4,8 +4,6 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const pool = require('./db');
-const e = require('express');
-const { error } = require('console');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
