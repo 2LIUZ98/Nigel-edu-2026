@@ -43,6 +43,7 @@
             </div>
         </main>
     </div>
+    <script src="../js/config.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("loginStudentForm");
@@ -63,7 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/login/student", {
+            //const response = await fetch("http://localhost:3000/login/student", {
+            const response = await fetch(`${BASE_URL}/login/student`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -107,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 </script>
 </body>
 </html>
