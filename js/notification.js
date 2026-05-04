@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadNotifications() {
     try {
-      const response = await fetch(`http://localhost:3000/notifications/${student.studentId}`);
+      //const response = await fetch(`http://localhost:3000/notifications/${student.studentId}`);
+      const response = await fetch(`${BASE_URL}/notifications/${student.studentId}`);
       let notifications = [];
 
       try {
@@ -56,7 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function markNotificationsRead() {
     try {
-      await fetch("http://localhost:3000/notifications/mark-read", {
+      //await fetch("http://localhost:3000/notifications/mark-read", {
+      await fetch(`${BASE_URL}/notifications/mark-read`, {        
         method: "POST",
         headers: {
           "Content-Type": "application/json"

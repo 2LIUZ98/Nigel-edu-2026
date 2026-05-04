@@ -1,17 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const raw = localStorage.getItem("nigel_student");
-    if (!raw){
-        window.location.href = "login-student.html";
-        return;
-    }
-    let student;
-    try{
-        student = JSON.parse(raw);
-    } catch {
-        localStorage.removeItem("nigel_student");
-        window.location.href = "login-student.html";
-        return;
-    }
+    const student = requireStudentOrRedirect();
+    if (!student) return;
 
     const toNumber = (v) => {
         const n = Number(String(v || "").replace(/[^0-9.]/g, ""));
@@ -62,7 +51,13 @@ document.addEventListener("DOMContentLoaded", () => {
         lastCompleted: new Date().toISOString(),
         lastResult: {income, needs, wants, savings, remaining}
         };
-        localStorage.setItem("nigel_student", JSON.stringify(student));
+        //localStorage.setItem("nigel_student", JSON.stringify(student));
+        const session = getSession();
+
+        if (session) {
+            session.simulatorProgress = student.progress.simulator;
+            setSession(session)
+        }
     });
 
     if (resetBtn){

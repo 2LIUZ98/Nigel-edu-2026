@@ -41,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       console.log("Student session:", student);
       console.log("Sending student_id:", student.studentId || student.student_id || student.id);
-      const response = await fetch("http://localhost:3000/verify-invitation-code", {
+      //const response = await fetch("http://localhost:3000/verify-invitation-code", {
+        const response = await fetch(`${BASE_URL}/verify-invitation-code`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

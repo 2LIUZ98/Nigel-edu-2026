@@ -62,7 +62,8 @@ const readJSON = (k, fallback) => {
         if (!studentResultsList) return;
 
         try{
-            const response = await fetch(`http://localhost:3000/staff/student-results/${me.id}/${me.role}`);
+            //const response = await fetch(`http://localhost:3000/staff/student-results/${me.id}/${me.role}`);
+            const response = await fetch(`${BASE_URL}/staff/student-results/${me.id}/${me.role}`);
             const results = await response.json();
 
             if (!results.length){
@@ -115,7 +116,8 @@ const readJSON = (k, fallback) => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/students");
+      //const response = await fetch("http://localhost:3000/students");
+      const response = await fetch(`${BASE_URL}/students`);
       students = await response.json();
 
       if (!response.ok) {
@@ -123,7 +125,8 @@ const readJSON = (k, fallback) => {
       }
 let visibleStudents = students
 if (me.role === "parent"){
-    const childResponse = await fetch(`http://localhost:3000/parent/children/${me.id}`);
+    //const childResponse = await fetch(`http://localhost:3000/parent/children/${me.id}`);
+    const childResponse = await fetch(`${BASE_URL}/parent/children/${me.id}`);
     visibleStudents = await childResponse.json();
 
 }
@@ -164,7 +167,8 @@ if(!visibleStudents.length){
       }
 
       try {
-        const response = await fetch("http://localhost:3000/invitation-codes", {
+        //const response = await fetch("http://localhost:3000/invitation-codes", {
+        const response = await fetch(`${BASE_URL}/invitation-codes`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

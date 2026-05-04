@@ -184,7 +184,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     
       for (const payload of answersToSave) {
-        await fetch("http://localhost:3000/quiz/submit", {
+        //await fetch("http://localhost:3000/quiz/submit", {
+          await fetch(`${BASE_URL}/quiz/submit`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

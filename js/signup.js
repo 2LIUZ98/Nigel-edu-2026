@@ -55,7 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (role === "parent"){
                 body.child_username = childUsername
             }
-            const response = await fetch("http://localhost:3000/register", {
+            //const response = await fetch("http://localhost:3000/register", {
+            const response = await fetch(`${BASE_URL}/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

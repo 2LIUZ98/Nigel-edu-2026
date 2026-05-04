@@ -35,7 +35,8 @@ document.addEventListener("DOMContentLoaded", async() => {
   const studentDBId = student.studentId || student.student_id || student.id;
 
   try{
-    const response = await fetch(`http://localhost:3000/progress/${studentDBId}`);
+    //const response = await fetch(`http://localhost:3000/progress/${studentDBId}`);
+    const response = await fetch(`${BASE_URL}/progress/${studentDBId}`);
     const progressData = await response.json();
 
     const completedModules = progressData.filter(item => item.completed === 1 || item.completed === true)
