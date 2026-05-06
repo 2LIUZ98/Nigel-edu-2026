@@ -60,3 +60,43 @@ window.requireStaffOrRedirect = window.requireStaffOrRedirect || function () {
     }
     return me;
 };
+
+function getDashboardUrl(role) {
+    if (role === "student") {
+        return "student-dashboard.html";
+    }
+
+    if (role === "teacher" || role === "parent") {
+        return "staff-dashboard.html";
+    }
+
+    return "portal.html";
+}
+
+function updateAuthButtons() {
+    const session = getSession();
+
+    const loginButtons = document.querySelectorAll(
+        '.topbar-right a.btn[href="portal.html"]'
+    );
+
+    loginButtons.forEach((button) => {
+        if (session && session.userId && session.role) {
+            button.textContent = `Logout (${session.role})`;
+            button.href = "#";
+            button.setAttribute("aria-label", "Log out");
+
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                clearSession();
+                window.location.href = "index.html";
+            });
+        } else {
+            button.textContent = "Login";
+            button.href = "portal.html";
+            button.setAttribute("aria-label", "Log in");
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", updateAuthButtons);

@@ -29,7 +29,7 @@ app.post('/register', async (req, res) => {
   }
 
   if (!['student', 'parent', 'teacher'].includes(role)) {
-    return res.status(400).json({ message: 'Ungültige Rolle.' });
+    return res.status(400).json({ message: 'Invalid role.' });
   }
 
   try {
@@ -65,7 +65,7 @@ app.post('/register', async (req, res) => {
       await pool.query(insertStudentSql, [userId, full_name]);
 
       return res.status(201).json({
-        message: 'Student erfolgreich registriert.',
+        message: 'Student registered successfully.',
         user: {
           id: userId,
           username,
@@ -114,7 +114,7 @@ app.post('/register', async (req, res) => {
      }
     }
     return res.status(201).json({
-      message: 'Account erfolgreich registriert.',
+      message: 'Account registered successfully.',
       user: {
         id: userId,
         username,
@@ -123,10 +123,10 @@ app.post('/register', async (req, res) => {
     });
   } catch (error) {
     if (error.code === '23505') {
-      return res.status(400).json({ message: 'Username existiert bereits.' });
+      return res.status(400).json({ message: 'Username already exists.' });
     }
     console.error(error);
-    return res.status(500).json({ message: 'Serverfehler bei der Registrierung.' });
+    return res.status(500).json({ message: 'Server error during registration.' });
   }
 });
 
@@ -157,21 +157,21 @@ app.post('/login/student', async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(401).json({ message: 'Ungültiger Username oder Passwort.' });
+      return res.status(401).json({ message: 'Invalid username or password.' });
     }
 
     if (user.role !== 'student') {
-      return res.status(403).json({ message: 'Dieser Login ist nur für Studenten.' });
+      return res.status(403).json({ message: 'This login is only for students.' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'Ungültiger Username oder Passwort.' });
+      return res.status(401).json({ message: 'Invalid username or password.' });
     }
 
     return res.status(200).json({
-      message: 'Student Login erfolgreich.',
+      message: 'Student Login successful.',
       user: {
         id: user.user_id,
         student_id: user.student_id,
@@ -183,7 +183,7 @@ app.post('/login/student', async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Fehler beim Login.' });
+    return res.status(500).json({ message: 'Server error during login.' });
   }
 });
 
@@ -192,7 +192,7 @@ app.post('/login/staff', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ message: 'Bitte Username und Passwort eingeben.' });
+    return res.status(400).json({ message: 'Please enter username and password.' });
   }
 
   try {
@@ -206,21 +206,21 @@ app.post('/login/staff', async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(401).json({ message: 'Ungültiger Username oder Passwort.' });
+      return res.status(401).json({ message: 'Invalid username or password.' });
     }
 
     if (user.role !== 'teacher' && user.role !== 'parent') {
-      return res.status(403).json({ message: 'Dieser Login ist nur für Eltern und Lehrer.' });
+      return res.status(403).json({ message: 'This login is only for parents and teachers.' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'Ungültiger Username oder Passwort.' });
+      return res.status(401).json({ message: 'Invalid username or password.' });
     }
 
     return res.status(200).json({
-      message: 'Staff Login erfolgreich.',
+      message: 'Staff Login successful.',
       user: {
         id: user.id,
         username: user.username,
@@ -231,7 +231,7 @@ app.post('/login/staff', async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Fehler beim Login.' });
+    return res.status(500).json({ message: 'Server error during login.' });
   }
 });
 
@@ -252,7 +252,7 @@ app.get('/students', async (req, res) => {
     return res.status(200).json(result.rows);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Fehler beim Laden der Schüler.' });
+    return res.status(500).json({ message: 'Server error while loading students.' });
   }
 });
 
@@ -261,7 +261,7 @@ app.post('/verify-invitation-code', async (req, res) => {
   const { student_id, module_slug, code } = req.body;
 
   if (!student_id || !module_slug || !code) {
-    return res.status(400).json({ message: 'student_id, module_slug und code sind erforderlich.' });
+    return res.status(400).json({ message: 'student_id, module_slug and code are required.' });
   }
 
   try {
@@ -298,7 +298,7 @@ app.post('/verify-invitation-code', async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Fehler beim Prüfen des Codes.' });
+    return res.status(500).json({ message: 'Server error while verifying code.' });
   }
 });
 
@@ -308,7 +308,7 @@ app.post('/invitation-codes', async (req, res) => {
 
   if (!module_id || !student_id || !created_by_user_id) {
     return res.status(400).json({
-      message: 'module_id, student_id und created_by_user_id sind erforderlich.'
+      message: 'module_id, student_id and created_by_user_id are required.'
     });
   }
 
@@ -372,7 +372,7 @@ app.post('/invitation-codes', async (req, res) => {
       const moduleRow = moduleResult.rows[0];
       if (!moduleRow) {
         await client.query('ROLLBACK');
-        return res.status(500).json({ message: 'Fehler beim Laden des Moduls.' });
+        return res.status(500).json({ message: 'Server error while loading module.' });
       }
 
       const title = 'New invitation code';
@@ -427,7 +427,7 @@ app.post('/invitation-codes', async (req, res) => {
     const moduleRow = moduleResult.rows[0];
     if (!moduleRow) {
       await client.query('ROLLBACK');
-      return res.status(500).json({ message: 'Fehler beim Laden des Moduls.' });
+      return res.status(500).json({ message: 'Server error while loading module.' });
     }
 
     const title = 'New invitation code';
@@ -451,7 +451,7 @@ app.post('/invitation-codes', async (req, res) => {
   } catch (error) {
     await client.query('ROLLBACK');
     console.error(error);
-    return res.status(500).json({ message: 'Fehler beim Erstellen des Codes.' });
+    return res.status(500).json({ message: 'Server error while creating code.' });
   } finally {
     client.release();
   }
@@ -473,7 +473,7 @@ app.get('/notifications/:studentId', async (req, res) => {
     return res.status(200).json(result.rows);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Fehler beim Laden der Benachrichtigungen.' });
+    return res.status(500).json({ message: 'Server error while loading notifications.' });
   }
 });
 
@@ -496,12 +496,12 @@ app.post('/notifications/mark-read', async (req, res) => {
     const result = await pool.query(sql, [student_id]);
 
     return res.status(200).json({
-      message: 'Benachrichtigungen als gelesen markiert.',
+      message: 'Notifications marked as read.',
       updated: result.rowCount
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Fehler beim Aktualisieren der Benachrichtigungen.' });
+    return res.status(500).json({ message: 'Server error while updating notifications.' });
   }
 });
 
