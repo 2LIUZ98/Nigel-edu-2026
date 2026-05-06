@@ -25,7 +25,7 @@ app.post('/register', async (req, res) => {
   const { username, password, role, full_name, first_name, last_name, child_username } = req.body;
 
   if (!username || !password || !role || !first_name || !last_name) {
-    return res.status(400).json({ message: 'Bitte alle Pflichtfelder ausfüllen.' });
+    return res.status(400).json({ message: 'Please fill in all required fields.' });
   }
 
   if (!['student', 'parent', 'teacher'].includes(role)) {
@@ -53,7 +53,7 @@ app.post('/register', async (req, res) => {
 
     if (role === 'student') {
       if (!full_name) {
-        return res.status(400).json({ message: 'Studenten brauchen einen Namen.' });
+        return res.status(400).json({ message: 'Students must have a full name .' });
       }
 
 
@@ -135,7 +135,7 @@ app.post('/login/student', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ message: 'Bitte Username und Passwort eingeben.' });
+    return res.status(400).json({ message: 'Please enter username and password.' });
   }
 
   try {
@@ -235,7 +235,7 @@ app.post('/login/staff', async (req, res) => {
   }
 });
 
-// Students laden
+// Load all students (for staff dashboard)
 app.get('/students', async (req, res) => {
   try {
     const sql = `
@@ -256,7 +256,7 @@ app.get('/students', async (req, res) => {
   }
 });
 
-// Code prüfen
+// Verify invitation code for a module and student
 app.post('/verify-invitation-code', async (req, res) => {
   const { student_id, module_slug, code } = req.body;
 
@@ -353,7 +353,7 @@ app.post('/invitation-codes', async (req, res) => {
 
       if (!students.length) {
         await client.query('ROLLBACK');
-        return res.status(400).json({ message: 'Keine Schüler gefunden.' });
+        return res.status(400).json({ message: 'No students found.' });
       }
 
       const insertCodeSql = `
@@ -390,7 +390,7 @@ app.post('/invitation-codes', async (req, res) => {
       await client.query('COMMIT');
 
       return res.status(201).json({
-        message: 'Code für alle Schüler erstellt.',
+        message: 'Code created for all students.',
         code: generatedCode
       });
     }
@@ -444,8 +444,8 @@ app.post('/invitation-codes', async (req, res) => {
 
     return res.status(201).json({
       message: existing
-        ? 'Bestehender Code wiederverwendet und Benachrichtigung gesendet.'
-        : 'Code erstellt und Benachrichtigung gesendet.',
+        ? 'Existing code reused and notification sent.'
+        : 'Code created and notification sent.',
       code: finalCode
     });
   } catch (error) {
@@ -457,7 +457,7 @@ app.post('/invitation-codes', async (req, res) => {
   }
 });
 
-// Notifications laden
+// Load notifications for a student
 app.get('/notifications/:studentId', async (req, res) => {
   const { studentId } = req.params;
 
@@ -482,7 +482,7 @@ app.post('/notifications/mark-read', async (req, res) => {
   const { student_id } = req.body;
 
   if (!student_id) {
-    return res.status(400).json({ message: 'student_id ist erforderlich.' });
+    return res.status(400).json({ message: 'student_id is required.' });
   }
 
   try {
@@ -662,5 +662,5 @@ app.get('/parent/children/:parentId', async (req, res) => {
 
 });
 app.listen(PORT, () => {
-  console.log(`Server läuft auf http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
